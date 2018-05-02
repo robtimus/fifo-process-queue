@@ -36,13 +36,32 @@ test('FIFOProcessQueue throws an error if provided with a non-function processor
     t.end();
 });
 
-test('FIFOProcessQueue throws an error if with a non-function postProcessor argument', function (t) {
+test('FIFOProcessQueue throws an error if provided with a non-function postProcessor argument', function (t) {
     t.throws(function () {
         FIFOProcessQueue(function () {}, 1);
     }, '[Error: postProcessor must be a function]');
     t.throws(function () {
         FIFOProcessQueue(function () {}, null)
     }, '[Error: postProcessor must be a function]');
+
+    t.end();
+});
+
+test('FIFOProcessQueue throws an error if provided with a non-number maxConcurrency argument', function (t) {
+    t.throws(function () {
+        FIFOProcessQueue(function () {}, function () {}, 'a');
+    }, '[Error: maxConcurrency must be a number]');
+    t.throws(function () {
+        FIFOProcessQueue(function () {}, function () {}, null);
+    }, '[Error: maxConcurrency must be a number]');
+
+    t.end();
+});
+
+test('FIFOProcessQueue throws an error if provided with a maxConcurrency argument < 1', function (t) {
+    t.throws(function () {
+        FIFOProcessQueue(function () {}, function () {}, 0.9999);
+    }, '[Error: maxConcurrency must be at least 1]');
 
     t.end();
 });
@@ -126,5 +145,29 @@ test('one processed at a time in processor without post processor', function (t)
         }, 100);
     };
     var queue = FIFOProcessQueue(processor);
+    queue.pushAll(items);
+});
+
+test('one processed at a time in processor with post processor and maxConcurrency 1', function (t) {
+    var items = [1, 2, 3, 4, 5];
+    var running = false;
+    var processed = 0;
+
+    var processor = function (data, callback) {
+        t.equal(running, false, 'running must be false when processor starts');
+        running = true;
+        setTimeout(function () {
+            t.equal(running, true, 'running must be true before callback() is called');
+            running = false;
+            callback();
+        }, 100);
+    };
+    var postProcessor = function (data) {
+        processed++;
+        if (processed === items.length) {
+            t.end();
+        }
+    };
+    var queue = FIFOProcessQueue(processor, postProcessor, 1);
     queue.pushAll(items);
 });

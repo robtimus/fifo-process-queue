@@ -1,6 +1,6 @@
 {
   "name": "fifo-process-queue",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A queue for processing data in FIFO order",
   "homepage": "https://github.com/robtimus/fifo-process-queue",
   "bugs": {

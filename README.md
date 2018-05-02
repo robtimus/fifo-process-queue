@@ -37,6 +37,8 @@ In _FIFO post-processing_ mode, pieces of data may be processed in parallel. How
 To create a queue in FIFO post-processing mode, provide not only a processor function (see above), but also a post-processor function. This function must take one argument:
 * The data to process. This is the data that was pushed onto the queue.
 
+In addition, the maximum number of concurrenty processed pieces of data can be given (at least 1). If this is omitted the queue will not impose any limits.
+
 Example:
 ```js
 var FIFOProcessQueue = require('fifo-process-queue');
@@ -50,7 +52,7 @@ var queue = FIFOProcessQueue(function (data, callback) {
     }, 100);
 }, function (data) {
     console.log('Post-processing', data);
-});
+}, 10); // maximum 10 pieces of data processed concurrently; optional value
 
 queue.push(1);
 queue.push(2);
