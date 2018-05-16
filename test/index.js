@@ -83,7 +83,7 @@ test('processed in FIFO order without post processor', function (t) {
                 var totalTime = times.reduce(function (sum, value) {
                     return sum + value;
                 }, 0);
-                t.deepEqual(items, processed, 'processed must be equal to items');
+                t.deepEqual(processed, items, 'processed must be equal to items');
                 t.ok(timeTaken >= totalTime, 'time taken should be at least the sum of times');
                 t.end();
             }
@@ -116,7 +116,7 @@ test('processed in FIFO order with post processor', function (t) {
             var maxTime = times.reduce(function (max, value) {
                 return max >= value ? max : value;
             }, 0);
-            t.deepEqual(items, processed, 'processed must be equal to items');
+            t.deepEqual(processed, items, 'processed must be equal to items');
             t.ok(timeTaken < totalTime, 'time taken should be smaller than the sum of times');
             t.ok(maxTime <= timeTaken && timeTaken < maxTime + 50, 'time taken should be approximately the max of times');
             t.end();
@@ -169,5 +169,88 @@ test('one processed at a time in processor with post processor and maxConcurrenc
         }
     };
     var queue = FIFOProcessQueue(processor, postProcessor, 1);
+    queue.pushAll(items);
+});
+
+test('bulk processing without post processor', function (t) {
+    var items = Array.apply(null, { length: 10000 }).map(Number.call, Number).map(function (n) {
+        return {
+            value: n,
+            triple: n * 3,
+            square: n * n,
+            root: Math.sqrt(n)
+        };
+    });
+    var processed = [];
+
+    var processor = function (data, callback) {
+        processed.push(data);
+        callback();
+        if (processed.length === items.length) {
+            t.deepEqual(processed, items, 'processed must be equal to items');
+            t.end();
+        }
+    };
+    var queue = FIFOProcessQueue(processor);
+    queue.pushAll(items);
+});
+
+test('bulk processing with post processor and unlimited concurrency', function (t) {
+    var items = Array.apply(null, { length: 10000 }).map(Number.call, Number).map(function (n) {
+        return {
+            value: n,
+            triple: n * 3,
+            square: n * n,
+            root: Math.sqrt(n)
+        };
+    });
+    var processed = [];
+
+    var processor = function (data, callback) {
+        callback();
+    };
+    var postProcessor = function (data) {
+        setTimeout(function () {
+            processed.push(data);
+            if (processed.length === items.length) {
+                processed.sort(function (a, b) {
+                    return a.value - b.value;
+                });
+                t.deepEqual(processed, items, 'processed must be equal to items');
+                t.end();
+            }
+        }, Math.random() * 100 + 100);
+    };
+    var queue = FIFOProcessQueue(processor, postProcessor);
+    queue.pushAll(items);
+});
+
+test('bulk processing with post processor and limited concurrency', function (t) {
+    var items = Array.apply(null, { length: 10000 }).map(Number.call, Number).map(function (n) {
+        return {
+            value: n,
+            triple: n * 3,
+            square: n * n,
+            root: Math.sqrt(n)
+        };
+    });
+    var processed = [];
+
+    var processor = function (data, callback) {
+        callback();
+    };
+    var postProcessor = function (data) {
+        setTimeout(function () {
+            processed.push(data);
+            if (processed.length === items.length) {
+                processed.sort(function (a, b) {
+                    return a.value - b.value;
+                });
+                t.deepEqual(processed, items, 'processed must be equal to items');
+                t.end();
+            }
+        }, Math.random() * 100 + 100);
+    };
+    var queue = FIFOProcessQueue(processor, postProcessor, 10);
     queue.pushAll(items);
 });
