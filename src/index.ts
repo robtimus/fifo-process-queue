@@ -10,6 +10,7 @@ export interface FIFOProcessQueue<E> {
 }
 
 interface Item<E> {
+  id: number;
   data: E;
   done: boolean;
 }
@@ -39,27 +40,39 @@ class SimpleFIFOProcessQueue<E> implements FIFOProcessQueue<E> {
 }
 
 class PostProcessingFIFOProcessQueue<E> implements FIFOProcessQueue<E> {
+  // 2^53 is the largest power of 2 for which 2^x !== 2^x - 1
+  private static readonly MAX_ID = Math.pow(2, 53);
+
+  private currentId: number;
   private pending: E[] = [];
   private processing: Item<E>[] = [];
 
-  constructor(private processor: Processor<E>, private postProcessor: PostProcessor<E>, private maxConcurrency: number) {}
+  constructor(private processor: Processor<E>, private postProcessor: PostProcessor<E>, private maxConcurrency: number) {
+    this.currentId = 0;
+  }
+
+  private nextId(): number {
+    this.currentId = (this.currentId + 1) % PostProcessingFIFOProcessQueue.MAX_ID;
+    return this.currentId;
+  }
 
   private startPending(): void {
     while (this.processing.length < this.maxConcurrency && this.pending.length > 0) {
       const item: Item<E> = {
+        id: this.nextId(),
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         data: this.pending.shift()!,
         done: false,
       };
       this.processing.push(item);
-      this.processor(item.data, () => this.done(item.data));
+      this.processor(item.data, () => this.done(item.id));
     }
   }
 
-  private done(data: E): void {
+  private done(id: number): void {
     for (let i = 0; i < this.processing.length; i++) {
       const item = this.processing[i];
-      if (item.data === data && !item.done) {
+      if (item.id === id && !item.done) {
         item.done = true;
         break;
       }
