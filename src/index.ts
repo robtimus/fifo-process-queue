@@ -82,6 +82,9 @@ class PostProcessingFIFOProcessQueue<E> implements FIFOProcessQueue<E> {
   }
 }
 
+export default function <E>(processor: Processor<E>): FIFOProcessQueue<E>;
+export default function <E>(processor: Processor<E>, postProcessor: PostProcessor<E>): FIFOProcessQueue<E>;
+export default function <E>(processor: Processor<E>, postProcessor: PostProcessor<E>, maxConcurrency: number): FIFOProcessQueue<E>;
 export default function <E>(processor: Processor<E>, postProcessor?: PostProcessor<E>, maxConcurrency?: number): FIFOProcessQueue<E> {
   if (typeof processor !== "function") {
     throw new Error("processor must be a function");
