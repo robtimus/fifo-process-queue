@@ -2,20 +2,10 @@
   "name": "fifo-process-queue",
   "description": "A queue for processing data in FIFO order",
   "main": "index.js",
-  "moduleType": [
-    "globals",
-    "node"
-  ],
+  "moduleType": ["globals", "node"],
   "license": "Apache-2.0",
-  "ignore": [
-    "node_modules",
-    "test",
-    ".gitignore",
-    "package-lock.json"
-  ],
-  "authors": [
-    "Rob Spoor"
-  ],
+  "ignore": ["node_modules", "test", ".gitignore", "package-lock.json"],
+  "authors": ["Rob Spoor"],
   "homepage": "https://github.com/robtimus/fifo-process-queue",
   "repository": {
     "type": "git",
