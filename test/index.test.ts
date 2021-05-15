@@ -283,3 +283,74 @@ describe("Bulk processing", () => {
     });
   });
 });
+
+describe("Processing advances if data is modified", () => {
+  interface Item {
+    value: number;
+    time: number;
+  }
+  function toItem(n: number): Item {
+    return {
+      value: n,
+      time: n,
+    };
+  }
+
+  test("without post processor", (done) => {
+    const times = [1500, 1000, 500];
+    const items: Item[] = times.map(toItem);
+    const processed: Item[] = [];
+    const start = Date.now();
+    const processor = (item: Item, callback: Callback) => {
+      setTimeout(() => {
+        item.value *= 2;
+        callback();
+        processed.push(item);
+        if (items.length === processed.length) {
+          const end = Date.now();
+          const timeTaken = end - start;
+          const totalTime = times.reduce((sum, value) => sum + value, 0);
+
+          expect(processed).toEqual(items);
+          expect(timeTaken).toBeGreaterThanOrEqual(totalTime);
+
+          done();
+        }
+      }, item.time);
+    };
+    const queue = FIFOProcessQueue(processor);
+    queue.pushAll(items);
+  });
+
+  test("with post processor", (done) => {
+    const times = [1500, 1000, 500];
+    const items: Item[] = times.map(toItem);
+    const processed: Item[] = [];
+    const start = Date.now();
+    const processor = (item: Item, callback: Callback) => {
+      setTimeout(function () {
+        item.value *= 2;
+        callback();
+      }, item.time);
+    };
+    const postProcessor = (item: Item) => {
+      item.value *= 2;
+      processed.push(item);
+      if (items.length === processed.length) {
+        const end = Date.now();
+        const timeTaken = end - start;
+        const totalTime = times.reduce((sum, value) => sum + value, 0);
+        const maxTime = times.reduce((max, value) => (max >= value ? max : value), 0);
+
+        expect(processed).toEqual(items);
+        expect(timeTaken).toBeLessThan(totalTime);
+        expect(timeTaken).toBeGreaterThanOrEqual(maxTime);
+        expect(timeTaken).toBeLessThan(maxTime + 50);
+
+        done();
+      }
+    };
+    const queue = FIFOProcessQueue(processor, postProcessor);
+    queue.pushAll(items);
+  });
+});
