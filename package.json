@@ -8,7 +8,9 @@
   },
   "license": "Apache-2.0",
   "author": "Rob Spoor",
-  "files": ["lib/**/*"],
+  "files": [
+    "lib/**/*"
+  ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "repository": {
