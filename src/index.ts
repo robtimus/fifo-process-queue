@@ -15,84 +15,88 @@ interface Item<E> {
   done: boolean;
 }
 
-class SimpleFIFOProcessQueue<E> implements FIFOProcessQueue<E> {
-  private queue: E[] = [];
+function simpleFIFOProcessQueue<E>(processor: Processor<E>): FIFOProcessQueue<E> {
+  const queue: E[] = [];
 
-  constructor(private processor: Processor<E>) {}
-
-  private done() {
-    this.queue.shift();
-    if (this.queue.length > 0) {
-      this.processor(this.queue[0], () => this.done());
+  function done() {
+    queue.shift();
+    if (queue.length > 0) {
+      processor(queue[0], () => done());
     }
   }
 
-  push(data: E): void {
-    this.queue.push(data);
-    if (this.queue.length === 1) {
-      this.processor(this.queue[0], () => this.done());
+  function push(data: E): void {
+    queue.push(data);
+    if (queue.length === 1) {
+      processor(queue[0], () => done());
     }
   }
 
-  pushAll(data: E[]): void {
-    data.forEach((d) => this.push(d));
+  function pushAll(data: E[]): void {
+    data.forEach((d) => push(d));
   }
+
+  return {
+    push: push,
+    pushAll: pushAll,
+  };
 }
 
-class PostProcessingFIFOProcessQueue<E> implements FIFOProcessQueue<E> {
+function postProcessingFIFOProcessQueue<E>(processor: Processor<E>, postProcessor: PostProcessor<E>, maxConcurrency: number): FIFOProcessQueue<E> {
   // 2^53 is the largest power of 2 for which 2^x !== 2^x - 1
-  private static readonly MAX_ID = Math.pow(2, 53);
+  const maxId = Math.pow(2, 53);
 
-  private currentId: number;
-  private pending: E[] = [];
-  private processing: Item<E>[] = [];
+  let currentId = 0;
+  const pending: E[] = [];
+  const processing: Item<E>[] = [];
 
-  constructor(private processor: Processor<E>, private postProcessor: PostProcessor<E>, private maxConcurrency: number) {
-    this.currentId = 0;
+  function nextId(): number {
+    currentId = (currentId + 1) % maxId;
+    return currentId;
   }
 
-  private nextId(): number {
-    this.currentId = (this.currentId + 1) % PostProcessingFIFOProcessQueue.MAX_ID;
-    return this.currentId;
-  }
-
-  private startPending(): void {
-    while (this.processing.length < this.maxConcurrency && this.pending.length > 0) {
+  function startPending(): void {
+    while (processing.length < maxConcurrency && pending.length > 0) {
       const item: Item<E> = {
-        id: this.nextId(),
+        id: nextId(),
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        data: this.pending.shift()!,
+        data: pending.shift()!,
         done: false,
       };
-      this.processing.push(item);
-      this.processor(item.data, () => this.done(item.id));
+      processing.push(item);
+      processor(item.data, () => done(item.id));
     }
   }
 
-  private done(id: number): void {
-    for (let i = 0; i < this.processing.length; i++) {
-      const item = this.processing[i];
+  function done(id: number): void {
+    for (let i = 0; i < processing.length; i++) {
+      const item = processing[i];
       if (item.id === id && !item.done) {
         item.done = true;
         break;
       }
     }
-    while (this.processing.length > 0 && this.processing[0].done) {
+    while (processing.length > 0 && processing[0].done) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const item = this.processing.shift()!;
-      this.postProcessor(item.data);
+      const item = processing.shift()!;
+      postProcessor(item.data);
     }
-    this.startPending();
+    startPending();
   }
 
-  push(data: E): void {
-    this.pending.push(data);
-    this.startPending();
+  function push(data: E): void {
+    pending.push(data);
+    startPending();
   }
 
-  pushAll(data: E[]): void {
-    data.forEach((d) => this.push(d));
+  function pushAll(data: E[]): void {
+    data.forEach((d) => push(d));
   }
+
+  return {
+    push: push,
+    pushAll: pushAll,
+  };
 }
 
 export default function <E>(processor: Processor<E>): FIFOProcessQueue<E>;
@@ -113,5 +117,5 @@ export default function <E>(processor: Processor<E>, postProcessor?: PostProcess
     throw new Error("maxConcurrency must be at least 1");
   }
 
-  return postProcessor ? new PostProcessingFIFOProcessQueue(processor, postProcessor, maxConcurrency) : new SimpleFIFOProcessQueue(processor);
+  return postProcessor ? postProcessingFIFOProcessQueue(processor, postProcessor, maxConcurrency) : simpleFIFOProcessQueue(processor);
 }
