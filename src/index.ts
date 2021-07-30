@@ -1,3 +1,5 @@
+///<amd-module name="fifo-process-queue"/>
+
 export type Callback = () => void;
 
 export type Processor<E> = (data: E, callback: Callback) => void;
@@ -46,7 +48,6 @@ function simpleFIFOProcessQueue<E>(processor: Processor<E>): FIFOProcessQueue<E>
 const maxId = Math.pow(2, 53);
 
 function postProcessingFIFOProcessQueue<E>(processor: Processor<E>, postProcessor: PostProcessor<E>, maxConcurrency: number): FIFOProcessQueue<E> {
-
   let currentId = 0;
   const pending: E[] = [];
   const processing: Item<E>[] = [];
