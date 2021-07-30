@@ -42,9 +42,10 @@ function simpleFIFOProcessQueue<E>(processor: Processor<E>): FIFOProcessQueue<E>
   };
 }
 
+// 2^53 is the largest power of 2 for which 2^x !== 2^x - 1
+const maxId = Math.pow(2, 53);
+
 function postProcessingFIFOProcessQueue<E>(processor: Processor<E>, postProcessor: PostProcessor<E>, maxConcurrency: number): FIFOProcessQueue<E> {
-  // 2^53 is the largest power of 2 for which 2^x !== 2^x - 1
-  const maxId = Math.pow(2, 53);
 
   let currentId = 0;
   const pending: E[] = [];
