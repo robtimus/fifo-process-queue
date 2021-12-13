@@ -8,17 +8,50 @@
   },
   "license": "Apache-2.0",
   "author": "Rob Spoor",
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
   "main": "index.js",
+  "types": "index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/robtimus/fifo-process-queue.git"
   },
   "scripts": {
-    "test": "node test/index.js"
+    "lint": "eslint index.js",
+    "format": "prettier --write \"**/*.+(json|js|jsx)\"",
+    "test": "jest"
   },
   "devDependencies": {
-    "tape": "^4.8.0",
-    "tape-catch": "^1.0.6",
-    "tap-spec": "^4.1.1"
+    "@types/jest": "^27.0.3",
+    "eslint": "^8.4.1",
+    "jest": "^27.4.4",
+    "prettier": "^2.5.1",
+    "ts-jest": "^27.1.1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended"
+    ]
+  },
+  "prettier": {
+    "printWidth": 999
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "globals": {
+      "ts-jest": {
+        "tsconfig": {
+          "esModuleInterop": false
+        },
+        "diagnostics": {
+          "ignoreCodes": [
+            "151001"
+          ]
+        }
+      }
+    }
   }
 }
