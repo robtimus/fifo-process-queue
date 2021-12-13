@@ -1,3 +1,5 @@
+export as namespace FIFOProcessQueue;
+
 declare function FIFOProcessQueue<E>(processor: FIFOProcessQueue.Processor<E>): FIFOProcessQueue.Queue<E>;
 declare function FIFOProcessQueue<E>(processor: FIFOProcessQueue.Processor<E>, postProcessor: FIFOProcessQueue.PostProcessor<E>): FIFOProcessQueue.Queue<E>;
 declare function FIFOProcessQueue<E>(processor: FIFOProcessQueue.Processor<E>, postProcessor: FIFOProcessQueue.PostProcessor<E>, maxConcurrency: number): FIFOProcessQueue.Queue<E>;

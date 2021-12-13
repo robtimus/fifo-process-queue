@@ -1,13 +1,16 @@
-/* eslint-disable no-undef */
-
 (function (root, factory) {
+  // eslint-disable-next-line no-undef
   if (typeof define === "function" && define.amd) {
+    // eslint-disable-next-line no-undef
     define("fifo-process-queue", [], factory);
+    // eslint-disable-next-line no-undef
   } else if (typeof module === "object" && module.exports) {
+    // eslint-disable-next-line no-undef
     module.exports = factory();
   } else {
     root.FIFOProcessQueue = factory();
   }
+  // eslint-disable-next-line no-undef
 })(typeof self !== "undefined" ? self : this, function () {
   function simpleFIFOProcessQueue(processor) {
     var queue = [];
