@@ -142,7 +142,7 @@ describe("Data is processed in FIFO order", () => {
   });
 });
 
-describe("One processed is at a time in processor", () => {
+describe("One item is processed at a time in processor", () => {
   test("without post processor", (done) => {
     const items = [1, 2, 3, 4, 5];
     let running = false;
