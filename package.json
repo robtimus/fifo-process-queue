@@ -21,6 +21,7 @@
   "scripts": {
     "lint": "eslint index.js",
     "format": "prettier --write \"**/*.+(json|js|jsx)\"",
+    "format:check": "prettier --check \"**/*.+(json|ts|tsx)\"",
     "test": "jest"
   },
   "devDependencies": {
