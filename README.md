@@ -1,4 +1,9 @@
 # fifo-process-queue
+[![npm](https://img.shields.io/npm/v/fifo-process-queue)](https://www.npmjs.com/package/fifo-process-queue)
+[![Build Status](https://github.com/robtimus/fifo-process-queue/actions/workflows/build.yml/badge.svg)](https://github.com/robtimus/fifo-process-queue/actions/workflows/build.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=robtimus%3Afifo-process-queue&metric=alert_status)](https://sonarcloud.io/summary/overall?id=robtimus%3Afifo-process-queue)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=robtimus%3Afifo-process-queue&metric=coverage)](https://sonarcloud.io/summary/overall?id=robtimus%3Afifo-process-queue)
+[![Known Vulnerabilities](https://snyk.io/test/github/robtimus/fifo-process-queue/badge.svg)](https://snyk.io/test/github/robtimus/fifo-process-queue)
 
 A queue for processing data in FIFO order.
 
