@@ -59,10 +59,13 @@
           data: pending.shift(),
           done: false,
         };
+        var callback = (function (id) {
+          return function () {
+            done(id);
+          };
+        })(item.id);
         processing.push(item);
-        processor(item.data, function () {
-          done(item.id);
-        });
+        processor(item.data, callback);
       }
     }
 
