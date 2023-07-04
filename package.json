@@ -25,12 +25,12 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@types/jest": "^27.0.3",
-    "eslint": "^8.4.1",
-    "jest": "^27.4.4",
-    "prettier": "^2.5.1",
-    "ts-jest": "^27.1.1",
-    "typescript": "^4.7.4"
+    "@types/jest": "^29.5.2",
+    "eslint": "^8.44.0",
+    "jest": "^29.6.0",
+    "prettier": "^2.8.8",
+    "ts-jest": "^29.1.1",
+    "typescript": "^4.9.5"
   },
   "eslintConfig": {
     "extends": [
@@ -43,17 +43,20 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "globals": {
-      "ts-jest": {
-        "tsconfig": {
-          "esModuleInterop": false
-        },
-        "diagnostics": {
-          "ignoreCodes": [
-            "151001"
-          ]
+    "transform": {
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+          "tsconfig": {
+            "esModuleInterop": false
+          },
+          "diagnostics": {
+            "ignoreCodes": [
+              "151001"
+            ]
+          }
         }
-      }
+      ]
     },
     "collectCoverage": true
   }
