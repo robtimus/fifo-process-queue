@@ -11,7 +11,7 @@
     root.FIFOProcessQueue = factory();
   }
   // eslint-disable-next-line no-undef
-})(typeof self !== "undefined" ? self : this, function () {
+})(typeof self === "undefined" ? this : self, function () {
   function simpleFIFOProcessQueue(processor) {
     var queue = [];
 
@@ -101,15 +101,15 @@
 
   return function (processor, postProcessor, maxConcurrency) {
     if (typeof processor !== "function") {
-      throw new Error("processor must be a function");
+      throw new TypeError("processor must be a function");
     }
-    if (typeof postProcessor !== "function" && typeof postProcessor !== "undefined") {
-      throw new Error("postProcessor must be a function");
+    if (postProcessor !== undefined && typeof postProcessor !== "function") {
+      throw new TypeError("postProcessor must be a function");
     }
-    if (typeof maxConcurrency === "undefined") {
+    if (maxConcurrency === undefined) {
       maxConcurrency = Number.MAX_VALUE;
     } else if (typeof maxConcurrency !== "number") {
-      throw new Error("maxConcurrency must be a number");
+      throw new TypeError("maxConcurrency must be a number");
     } else if (maxConcurrency < 1) {
       throw new Error("maxConcurrency must be at least 1");
     }
