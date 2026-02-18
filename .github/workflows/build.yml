@@ -38,7 +38,7 @@ jobs:
           node-version: ${{matrix.node}}
           cache: 'npm'
       - name: Install packages
-        run: npm ci
+        run: npm ci --ignore-scripts
       - name: Run checks
         run: npm run format:check && npm run lint
       - name: Run tests
