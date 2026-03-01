@@ -242,16 +242,19 @@ describe("Bulk processing", () => {
         callback();
       };
       const postProcessor = (item: Item) => {
-        setTimeout(() => {
-          processed.push(item);
+        setTimeout(
+          () => {
+            processed.push(item);
 
-          if (processed.length === items.length) {
-            processed.sort((a, b) => a.value - b.value);
+            if (processed.length === items.length) {
+              processed.sort((a, b) => a.value - b.value);
 
-            expect(processed).toEqual(items);
-            done();
-          }
-        }, Math.random() * 100 + 100);
+              expect(processed).toEqual(items);
+              done();
+            }
+          },
+          Math.random() * 100 + 100,
+        );
       };
       const queue = FIFOProcessQueue(processor, postProcessor);
       queue.pushAll(items);
@@ -268,16 +271,19 @@ describe("Bulk processing", () => {
         callback();
       };
       const postProcessor = (item: Item) => {
-        setTimeout(() => {
-          processed.push(item);
+        setTimeout(
+          () => {
+            processed.push(item);
 
-          if (processed.length === items.length) {
-            processed.sort((a, b) => a.value - b.value);
+            if (processed.length === items.length) {
+              processed.sort((a, b) => a.value - b.value);
 
-            expect(processed).toEqual(items);
-            done();
-          }
-        }, Math.random() * 100 + 100);
+              expect(processed).toEqual(items);
+              done();
+            }
+          },
+          Math.random() * 100 + 100,
+        );
       };
       const queue = FIFOProcessQueue(processor, postProcessor, 10);
       queue.pushAll(items);
