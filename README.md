@@ -17,16 +17,16 @@ To create a queue in FIFO processing mode, provide only a _processor_ function. 
 * A callback function. When the processing is done, this non-argument callback _must_ be called.
 
 Example:
-```js
-var FIFOProcessQueue = require('fifo-process-queue');
+```typescript
+import { FIFOProcessQueue } from "fifo-process-queue";
 
-var queue = FIFOProcessQueue(function (data, callback) {
-    console.log('Processing', data);
+const queue = FIFOProcessQueue((data, callback) => {
+  console.log('Processing', data);
 
-    setTimeout(function () {
-        console.log('Finished', data);
-        callback();
-    }, 100);
+  setTimeout(() => {
+    console.log('Finished', data);
+    callback();
+  }, 100);
 });
 
 queue.push(1);
@@ -44,17 +44,17 @@ To create a queue in FIFO post-processing mode, provide not only a processor fun
 In addition, the maximum number of concurrenty processed pieces of data can be given (at least 1). If this is omitted the queue will not impose any limits.
 
 Example:
-```js
-var FIFOProcessQueue = require('fifo-process-queue');
+```typescript
+import { FIFOProcessQueue } from "fifo-process-queue";
 
-var queue = FIFOProcessQueue(function (data, callback) {
-    console.log('Processing', data);
+const queue = FIFOProcessQueue((data, callback) => {
+  console.log('Processing', data);
 
-    setTimeout(function () {
-        console.log('Finished', data);
-        callback();
-    }, 100);
-}, function (data) {
+  setTimeout(function () {
+    console.log('Finished', data);
+    callback();
+  }, 100);
+}, (data) => {
     console.log('Post-processing', data);
 }, 10); // maximum 10 pieces of data processed concurrently; optional value
 
@@ -62,7 +62,3 @@ queue.push(1);
 queue.push(2);
 queue.pushAll([3, 4, 5]);
 ```
-
-## Using in browsers
-
-Besides using tools like [Browserify](http://browserify.org/), you can also simply include file `index.js` in a script tag. This will register a global function `FIFOProcessQueue` which can be used to create process queues.

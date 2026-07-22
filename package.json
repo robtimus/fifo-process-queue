@@ -9,58 +9,37 @@
   "license": "Apache-2.0",
   "author": "Rob Spoor",
   "files": [
-    "index.js",
-    "index.d.ts"
+    "lib"
   ],
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/robtimus/fifo-process-queue.git"
   },
   "scripts": {
-    "lint": "eslint index.js",
-    "format": "prettier --write \"**/*.+(json|js|jsx|ts|tsx)\"",
-    "format:check": "prettier --check \"**/*.+(json|js|jsx|ts|tsx)\"",
-    "test": "jest"
+    "compile": "tsc",
+    "lint": "eslint ./src/**",
+    "format": "prettier --write \"**/*.+(json|ts|tsx)\"",
+    "format:check": "prettier --check \"**/*.+(json|ts|tsx)\"",
+    "build": "npm run format:check && npm run lint && npm run compile",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "@types/jest": "^30.0.0",
-    "eslint": "^8.57.1",
-    "jest": "^30.2.0",
-    "prettier": "^3.8.1",
-    "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3"
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^20.19.43",
+    "@vitest/coverage-v8": "^4.1.10",
+    "eslint": "^10.7.0",
+    "jiti": "^2.7.0",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.65.0",
+    "vitest": "^4.1.10"
   },
-  "overrides": {
-    "js-yaml": "5.1.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "eslint:recommended"
-    ]
+  "engines": {
+    "node": ">=20"
   },
   "prettier": {
-    "printWidth": 150
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "transform": {
-      "^.+\\.tsx?$": [
-        "ts-jest",
-        {
-          "tsconfig": {
-            "esModuleInterop": false
-          },
-          "diagnostics": {
-            "ignoreCodes": [
-              "151001"
-            ]
-          }
-        }
-      ]
-    },
-    "collectCoverage": true
+    "printWidth": 180
   }
 }
